@@ -18,16 +18,32 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com"],
-        styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.jsdelivr.net", "https://cdnjs.cloudflare.com", "https://fonts.googleapis.com"],
-        fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
-        imgSrc: ["'self'", "data:", "blob:"],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://cdn.tailwindcss.com",
+          "https://cdn.jsdelivr.net",
+          "https://cdnjs.cloudflare.com"
+        ],
+        scriptSrcAttr: ["'unsafe-inline'"], // Permite atributos inline como onclick, onsubmit, etc.
+        styleSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com",
+          "https://cdnjs.cloudflare.com"
+        ],
+        fontSrc: [
+          "'self'",
+          "https://fonts.gstatic.com",
+          "https://cdnjs.cloudflare.com"
+        ],
+        imgSrc: ["'self'", "data:", "blob:", "https:"],
         connectSrc: ["'self'"],
         objectSrc: ["'none'"],
-        frameAncestors: ["'self'"],
-      },
+        frameAncestors: ["'self'"]
+      }
     },
-    crossOriginEmbedderPolicy: false,
+    crossOriginEmbedderPolicy: false
   })
 );
 
