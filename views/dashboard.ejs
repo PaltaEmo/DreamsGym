@@ -6,20 +6,22 @@
     <title>Gimnasio 24/7 Dreams - Sistema de Reservas</title>
     <style>
         :root {
-            --bg-principal: #0b132b;
-            --bg-tarjeta: #141e3c;
-            --bg-bloque: #1c2a4f;
-            --bg-deshabilitado: #0e152b;
-            --borde: #24355a;
-            --borde-tarjeta: #2b3d68; /* Borde más definido y marcado */
-            --borde-dorado: #d4af37;
-            --oro: #d4af37;
-            --oro-claro: #fef08a;
+            --bg-principal: #080d1a;
+            --bg-tarjeta: #0d1527;
+            --bg-bloque: #15223e;
+            --bg-pasado: #0a0f1d;
+            
+            /* Bordes definidos y reforzados */
+            --borde-tarjeta: #1e2e4f;
+            --borde-tarjeta-hover: #354d80;
+            --borde-mio: #d4af37;
+            
+            --oro: #eab308;
+            --oro-texto: #fde047;
             --texto-claro: #f8fafc;
-            --texto-apagado: #8da0cb;
-            --rojo-alerta: #ef4444;
-            --verde-disponible: #22c55e;
-            --rojo-boton: #991b1b;
+            --texto-apagado: #64748b;
+            --verde-cupos: #22c55e;
+            --rojo-cancelar: #991b1b;
         }
 
         * {
@@ -37,10 +39,10 @@
             flex-direction: column;
         }
 
-        /* Cabecera Corporativa */
+        /* Cabecera */
         header {
             background-color: var(--bg-tarjeta);
-            border-bottom: 1px solid var(--borde);
+            border-bottom: 1.5px solid var(--borde-tarjeta);
             padding: 16px 32px;
             display: flex;
             justify-content: space-between;
@@ -48,22 +50,21 @@
         }
 
         .header-titulos h1 {
-            font-size: 1.35rem;
-            color: var(--oro);
-            letter-spacing: 0.5px;
+            font-size: 1.3rem;
+            color: var(--oro-texto);
             font-weight: 700;
         }
 
         .header-titulos p {
             font-size: 0.85rem;
             color: var(--texto-apagado);
-            margin-top: 3px;
+            margin-top: 2px;
         }
 
         .header-perfil {
             display: flex;
             align-items: center;
-            gap: 18px;
+            gap: 16px;
         }
 
         .datos-usuario {
@@ -73,7 +74,7 @@
 
         .datos-usuario .nombre {
             font-weight: 700;
-            color: var(--oro-claro);
+            color: var(--oro-texto);
             display: block;
         }
 
@@ -83,9 +84,9 @@
         }
 
         .btn-header {
-            background: var(--bg-principal);
+            background: #090e1c;
             color: var(--oro);
-            border: 1px solid var(--borde);
+            border: 1px solid var(--borde-tarjeta);
             padding: 8px 14px;
             border-radius: 6px;
             font-size: 0.85rem;
@@ -118,18 +119,18 @@
             padding: 0 20px 40px;
         }
 
-        /* Selector de Semanas */
+        /* Control de Semanas */
         .semana-control {
             display: flex;
             gap: 12px;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
 
         .btn-semana {
             background: var(--bg-tarjeta);
             color: var(--texto-apagado);
-            border: 1px solid var(--borde);
-            padding: 11px 24px;
+            border: 1.5px solid var(--borde-tarjeta);
+            padding: 10px 22px;
             border-radius: 8px;
             font-weight: 700;
             font-size: 0.95rem;
@@ -137,14 +138,9 @@
             transition: all 0.2s ease;
         }
 
-        .btn-semana:hover {
-            border-color: var(--oro);
-            color: var(--texto-claro);
-        }
-
         .btn-semana.activo {
             background: var(--oro);
-            color: #0b132b;
+            color: #000;
             border-color: var(--oro);
         }
 
@@ -153,7 +149,7 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
         }
 
         .dia-card {
@@ -164,19 +160,17 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
-            user-select: none;
             position: relative;
         }
 
         .dia-card:hover:not(.bloqueado) {
             border-color: var(--oro);
-            transform: translateY(-2px);
         }
 
         .dia-card.activo {
             background: var(--bg-bloque);
             border-color: var(--oro);
-            box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+            box-shadow: 0 0 10px rgba(234, 179, 8, 0.2);
         }
 
         .dia-card .etiqueta-nombre {
@@ -188,11 +182,11 @@
         }
 
         .dia-card.activo .etiqueta-nombre {
-            color: var(--oro-claro);
+            color: var(--oro-texto);
         }
 
         .dia-card .numero-fecha {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: #fff;
             margin-top: 4px;
@@ -203,39 +197,21 @@
             color: var(--oro);
         }
 
-        .dia-card .badge-hoy {
-            position: absolute;
-            top: 4px;
-            right: 6px;
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: var(--oro);
-            background: rgba(212, 175, 55, 0.15);
-            padding: 1px 4px;
-            border-radius: 4px;
-        }
-
         .dia-card.bloqueado {
-            background: var(--bg-deshabilitado);
-            border-color: #1a243c;
-            opacity: 0.4;
+            background: var(--bg-pasado);
+            border-color: #111a2e;
+            opacity: 0.35;
             cursor: not-allowed;
-            filter: grayscale(80%);
         }
 
-        .dia-card.bloqueado .numero-fecha,
-        .dia-card.bloqueado .etiqueta-nombre {
-            color: #64748b;
-        }
-
-        /* Fila de Canceladas (Solo para Hoy o Mañana) */
+        /* Fila de Canceladas */
         .caja-canceladas {
             display: flex;
             align-items: center;
             gap: 12px;
-            background: rgba(20, 30, 60, 0.75);
+            background: rgba(13, 21, 39, 0.85);
             border: 1.5px solid #7f1d1d;
-            border-left: 4px solid var(--rojo-alerta);
+            border-left: 4px solid #ef4444;
             border-radius: 8px;
             padding: 10px 16px;
             margin-bottom: 20px;
@@ -258,129 +234,130 @@
         }
 
         .chip-cancelada {
-            background: #1e1b2e;
+            background: #1c1524;
             color: #fca5a5;
             border: 1px solid #991b1b;
             padding: 3px 10px;
             border-radius: 6px;
             font-size: 0.85rem;
             font-weight: 700;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
 
         /* Grilla y Borde Reforzado en la Zona de Horas */
         .grilla-turnos {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 16px;
         }
 
         .turno-card {
             background: var(--bg-tarjeta);
-            border: 1.5px solid var(--borde-tarjeta); /* Borde bien definido solicitado */
+            border: 1.5px solid var(--borde-tarjeta);
             border-radius: 10px;
             padding: 16px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            min-height: 145px;
-            transition: all 0.2s ease;
+            min-height: 140px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
-        .turno-card:hover:not(.pasado) {
-            border-color: var(--borde-dorado);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        .turno-card:hover:not(.pasado):not(.limite-alcanzado) {
+            border-color: var(--borde-tarjeta-hover);
         }
 
+        /* Tarjeta propia reservada */
         .turno-card.mio {
-            border-color: var(--oro);
-            background: #172554;
+            border: 1.5px solid var(--borde-mio);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
         }
 
-        .turno-card.lleno {
-            opacity: 0.75;
-        }
-
-        .turno-card.pasado {
-            background: var(--bg-deshabilitado);
-            border-color: #1a243c;
+        /* Horario pasado o bloqueado por límite de 2 horas */
+        .turno-card.pasado,
+        .turno-card.limite-alcanzado {
+            background: var(--bg-pasado);
+            border-color: #111a2e;
             opacity: 0.45;
+        }
+
+        .turno-card.pasado .turno-hora,
+        .turno-card.limite-alcanzado .turno-hora {
+            color: var(--texto-apagado);
         }
 
         .turno-encabezado {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .turno-hora {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            color: var(--oro-claro);
+            color: var(--oro-texto);
         }
 
-        .turno-card.pasado .turno-hora {
-            color: #64748b;
-        }
-
-        .badge-aforo {
+        /* Badges estilo Píldora */
+        .badge-pildora {
             font-size: 0.75rem;
             font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 12px;
-            background: var(--bg-principal);
-            border: 1px solid var(--borde);
+            padding: 4px 10px;
+            border-radius: 9999px;
+            background: #090e1a;
+            border: 1px solid #1a2744;
         }
 
-        .badge-aforo.disponible { color: var(--verde-disponible); border-color: rgba(34, 197, 94, 0.35); }
-        .badge-aforo.lleno { color: var(--rojo-alerta); border-color: rgba(239, 68, 68, 0.35); }
-        .badge-aforo.pasado { color: #64748b; border-color: #334155; }
+        .badge-pildora.disponible {
+            color: var(--verde-cupos);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-pildora.lleno {
+            color: #ef4444;
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+
+        .badge-pildora.pasado {
+            color: var(--texto-apagado);
+            border-color: #1e293b;
+        }
 
         .participantes-caja {
             font-size: 0.75rem;
             color: var(--texto-apagado);
-            background: rgba(11, 19, 43, 0.6);
-            border: 1px dashed var(--borde);
+            background: rgba(8, 13, 26, 0.6);
+            border: 1px dashed var(--borde-tarjeta);
             padding: 6px 8px;
             border-radius: 6px;
-            margin: 8px 0;
+            margin-bottom: 10px;
             line-height: 1.35;
         }
 
-        .participantes-caja div {
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* Botones de Acción */
+        /* Botones de acción */
         .btn-turno {
             width: 100%;
-            padding: 9px;
-            border-radius: 6px;
+            padding: 10px;
+            border-radius: 8px;
             font-weight: 700;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             cursor: pointer;
             border: none;
-            margin-top: 8px;
             transition: all 0.2s ease;
         }
 
         .btn-reservar {
             background: var(--oro);
-            color: #0b132b;
+            color: #000;
         }
 
         .btn-reservar:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
+            opacity: 0.92;
         }
 
         .btn-cancelar {
-            background: var(--rojo-boton);
-            color: #fecaca;
-            border: 1px solid #dc2626;
+            background: var(--rojo-cancelar);
+            color: #f8fafc;
         }
 
         .btn-cancelar:hover {
@@ -388,28 +365,27 @@
         }
 
         .btn-deshabilitado {
-            background: #1e293b;
-            color: #64748b;
+            background: #101626;
+            color: #475569;
             cursor: not-allowed;
-            opacity: 0.6;
         }
 
-        /* Toast de Alerta */
+        /* Toast de notificaciones */
         .alerta-toast {
             position: fixed;
             bottom: 24px;
             right: 24px;
             z-index: 99999;
-            background: #0f172a;
-            color: var(--oro-claro);
-            border: 1px solid var(--oro);
-            padding: 16px 22px;
+            background: #0d1527;
+            color: var(--oro-texto);
+            border: 1.5px solid var(--oro);
+            padding: 14px 20px;
             border-radius: 8px;
             font-size: 0.9rem;
             font-weight: 600;
-            line-height: 1.5;
+            line-height: 1.4;
             white-space: pre-line;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             transition: opacity 0.4s ease, transform 0.4s ease;
         }
     </style>
@@ -419,7 +395,7 @@
     <header>
         <div class="header-titulos">
             <h1>GIMNASIO 24/7 DREAMS</h1>
-            <p>Control de Acceso y Aforo (Máximo 4 personas por bloque horario)</p>
+            <p>Control de Acceso y Aforo (Máximo 4 personas por turno)</p>
         </div>
         <div class="header-perfil">
             <button id="btnNotif" class="btn-header" onclick="solicitarPermisoAvisos()">🔔 Activar Notificaciones</button>
@@ -432,34 +408,34 @@
     </header>
 
     <main>
-        <!-- Pestañas Semana Actual / Semana Siguiente -->
+        <!-- Navegación Semana Actual / Semana Siguiente -->
         <div class="semana-control">
             <button class="btn-semana activo" id="btnSemanaActual" onclick="seleccionarSemana(0)">Semana Actual</button>
             <button class="btn-semana" id="btnSemanaSiguiente" onclick="seleccionarSemana(1)">Semana Siguiente</button>
         </div>
 
-        <!-- Barra de Días con bloqueo automático de pasados -->
+        <!-- Barra de Días -->
         <div class="dias-contenedor" id="barraDias"></div>
 
-        <!-- Fila de Canceladas (Aparece solo si el día es Hoy o Mañana y tiene horas canceladas) -->
+        <!-- Fila de Canceladas -->
         <div class="caja-canceladas" id="cajaCanceladas" style="display: none;">
             <span class="label-canceladas">Canceladas:</span>
             <div class="fila-canceladas" id="filaCanceladas"></div>
         </div>
 
-        <!-- Grilla de Turnos con bordes reforzados -->
+        <!-- Grilla de Turnos Horarios -->
         <div class="grilla-turnos" id="grillaTurnos"></div>
     </main>
 
     <script>
-        let semanaOffset = 0; // 0 = actual, 1 = siguiente
+        let semanaOffset = 0;
         let fechaActivaStr = '';
 
-        const NOMBRES_DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+        const NOMBRES_DIAS = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO'];
 
         function calcularLunes(offset) {
             const fecha = new Date();
-            const diaSemana = fecha.getDay(); // 0 es Domingo
+            const diaSemana = fecha.getDay();
             const diferencia = (diaSemana === 0 ? -6 : 1) - diaSemana;
             fecha.setDate(fecha.getDate() + diferencia + (offset * 7));
             return fecha;
@@ -471,7 +447,6 @@
             const manana = new Date(ahora);
             manana.setDate(manana.getDate() + 1);
             const mananaStr = manana.toLocaleDateString('en-CA');
-
             return (fechaStr === hoyStr || fechaStr === mananaStr);
         }
 
@@ -489,7 +464,6 @@
                 const str = fechaDia.toLocaleDateString('en-CA');
 
                 const esPasado = str < hoyStr;
-                const esHoy = str === hoyStr;
 
                 if (!esPasado && !primerDiaHabilitado) {
                     primerDiaHabilitado = str;
@@ -498,10 +472,7 @@
                 const card = document.createElement('div');
                 card.className = `dia-card ${esPasado ? 'bloqueado' : ''} ${str === fechaActivaStr ? 'activo' : ''}`;
 
-                let badgeHoyHtml = esHoy ? `<span class="badge-hoy">HOY</span>` : '';
-
                 card.innerHTML = `
-                    ${badgeHoyHtml}
                     <span class="etiqueta-nombre">${NOMBRES_DIAS[i]}</span>
                     <span class="numero-fecha">${fechaDia.getDate()}</span>
                 `;
@@ -534,8 +505,7 @@
             tarjetas.forEach((tarjeta, index) => {
                 const dia = new Date(lunes);
                 dia.setDate(lunes.getDate() + index);
-                const currentStr = dia.toLocaleDateString('en-CA');
-                tarjeta.classList.toggle('activo', currentStr === fechaActivaStr);
+                tarjeta.classList.toggle('activo', dia.toLocaleDateString('en-CA') === fechaActivaStr);
             });
 
             cargarGrillaTurnos();
@@ -547,7 +517,7 @@
             const cajaCanceladas = document.getElementById('cajaCanceladas');
             const filaCanceladas = document.getElementById('filaCanceladas');
 
-            contenedor.innerHTML = '<p style="color: var(--texto-apagado); grid-column: 1/-1;">Cargando horarios...</p>';
+            contenedor.innerHTML = '<p style="color: var(--texto-apagado); grid-column: 1/-1;">Cargando turnos...</p>';
 
             try {
                 const res = await fetch(`/api/horarios?fecha=${fechaActivaStr}`);
@@ -558,13 +528,14 @@
                 const horaActual = new Date().getHours();
                 const esHoy = fechaActivaStr === hoyStr;
 
-                // --- FILTRO: SOLO HORAS FUTURAS ---
-                // Si es hoy: solo horas iguales o mayores a la hora actual
-                // Si es mañana: todas las horas son futuras
+                // 1. Detección de límite diario: ¿El usuario ya tiene 2 horas reservadas hoy?
+                const misReservasDelDia = data.bloques.filter(b => b.reservadoPorMi).length;
+                const limiteAlcanzado = misReservasDelDia >= 2;
+
+                // 2. Fila Canceladas: Solo Hoy o Mañana y solo horas futuras
                 const canceladasFuturas = (data.horasCanceladas || []).filter(hStr => {
                     const horaNum = parseInt(hStr.split(':')[0], 10);
-                    if (!esHoy) return true; 
-                    return horaNum >= horaActual; 
+                    return !esHoy || horaNum >= horaActual;
                 });
 
                 if (esHoyOMañana(fechaActivaStr) && canceladasFuturas.length > 0) {
@@ -576,7 +547,6 @@
                     cajaCanceladas.style.display = 'none';
                     filaCanceladas.innerHTML = '';
                 }
-                // ----------------------------------
 
                 contenedor.innerHTML = '';
 
@@ -584,10 +554,17 @@
                     const card = document.createElement('div');
                     const bloquePasado = esHoy && b.hora < horaActual;
 
+                    // Determinar clase de estado
                     let claseEstado = '';
-                    if (bloquePasado) claseEstado = 'pasado';
-                    else if (b.reservadoPorMi) claseEstado = 'mio';
-                    else if (!b.disponible) claseEstado = 'lleno';
+                    if (bloquePasado) {
+                        claseEstado = 'pasado';
+                    } else if (b.reservadoPorMi) {
+                        claseEstado = 'mio';
+                    } else if (limiteAlcanzado) {
+                        claseEstado = 'limite-alcanzado'; // Pasa a gris si alcanzó las 2 reservas
+                    } else if (!b.disponible) {
+                        claseEstado = 'lleno';
+                    }
 
                     card.className = `turno-card ${claseEstado}`;
 
@@ -600,39 +577,46 @@
                         `;
                     }
 
-                    let botonAccion = '';
+                    // Determinar botón de acción
+                    let botonHtml = '';
                     if (bloquePasado) {
-                        botonAccion = `<button class="btn-turno btn-deshabilitado" disabled>Horario Pasado</button>`;
+                        botonHtml = `<button class="btn-turno btn-deshabilitado" disabled>Horario Pasado</button>`;
                     } else if (b.reservadoPorMi) {
-                        botonAccion = `<button class="btn-turno btn-cancelar" onclick="cancelarTurno(${b.reservaId})">Cancelar Mi Reserva</button>`;
+                        botonHtml = `<button class="btn-turno btn-cancelar" onclick="cancelarTurno(${b.reservaId})">Cancelar Mi Reserva</button>`;
+                    } else if (limiteAlcanzado) {
+                        botonHtml = `<button class="btn-turno btn-deshabilitado" disabled>Límite Diario (2/2)</button>`;
                     } else if (b.disponible) {
-                        botonAccion = `<button class="btn-turno btn-reservar" onclick="reservarTurno(${b.hora})">Reservar Cupo</button>`;
+                        botonHtml = `<button class="btn-turno btn-reservar" onclick="reservarTurno(${b.hora})">Reservar Cupo</button>`;
                     } else {
-                        botonAccion = `<button class="btn-turno btn-deshabilitado" disabled>Aforo Completo (4/4)</button>`;
+                        botonHtml = `<button class="btn-turno btn-deshabilitado" disabled>Sin Cupos</button>`;
                     }
 
+                    // Badge de aforo
                     let badgeClase = 'disponible';
-                    if (bloquePasado) badgeClase = 'pasado';
-                    else if (b.ocupados >= b.capacidadMaxima) badgeClase = 'lleno';
+                    if (bloquePasado || (limiteAlcanzado && !b.reservadoPorMi)) {
+                        badgeClase = 'pasado';
+                    } else if (b.ocupados >= b.capacidadMaxima) {
+                        badgeClase = 'lleno';
+                    }
 
                     card.innerHTML = `
                         <div>
                             <div class="turno-encabezado">
                                 <span class="turno-hora">${b.horaTexto}</span>
-                                <span class="badge-aforo ${badgeClase}">
+                                <span class="badge-pildora ${badgeClase}">
                                     ${bloquePasado ? 'Finalizado' : `${b.ocupados} / ${b.capacidadMaxima}`}
                                 </span>
                             </div>
                             ${participantesHtml}
                         </div>
-                        ${botonAccion}
+                        ${botonHtml}
                     `;
 
                     contenedor.appendChild(card);
                 });
 
             } catch (err) {
-                contenedor.innerHTML = `<p style="color: var(--rojo-alerta); grid-column: 1/-1;">Error: ${err.message}</p>`;
+                contenedor.innerHTML = `<p style="color: #ef4444; grid-column: 1/-1;">Error: ${err.message}</p>`;
             }
         }
 
@@ -674,24 +658,13 @@
             }
         }
 
-        // SSE en Tiempo Real
+        // Conexión SSE para notificaciones
         if (!!window.EventSource) {
-            const canalSSE = new EventSource('/api/notificaciones/stream');
-
-            canalSSE.onmessage = function(event) {
+            const canal = new EventSource('/api/notificaciones/stream');
+            canal.onmessage = function(event) {
                 try {
                     const data = JSON.parse(event.data);
-                    const mensaje = `Alguien ha cancelado una hora.\nDía: ${data.dia}\nHora: ${data.hora}`;
-
-                    mostrarToast(mensaje);
-
-                    if (window.Notification && Notification.permission === "granted") {
-                        new Notification("Hora Cancelada en Gimnasio", {
-                            body: `Se ha cancelado una hora para ${data.dia} a las ${data.hora}.`,
-                            icon: "/img/logo.png"
-                        });
-                    }
-
+                    mostrarToast(`Alguien ha cancelado una hora.\nDía: ${data.dia}\nHora: ${data.hora}`);
                     cargarGrillaTurnos();
                 } catch (e) {
                     console.error("Error SSE:", e);
@@ -700,16 +673,14 @@
         }
 
         function solicitarPermisoAvisos() {
-            if (!("Notification" in window)) {
-                alert("Navegador sin soporte de notificaciones.");
-                return;
+            if ("Notification" in window) {
+                Notification.requestPermission().then(p => {
+                    if (p === "granted") {
+                        document.getElementById('btnNotif').style.display = 'none';
+                        mostrarToast("Avisos activados con éxito.");
+                    }
+                });
             }
-            Notification.requestPermission().then(p => {
-                if (p === "granted") {
-                    document.getElementById('btnNotif').style.display = 'none';
-                    mostrarToast("Avisos activados con éxito.");
-                }
-            });
         }
 
         if (window.Notification && Notification.permission === "granted") {
@@ -728,6 +699,11 @@
                 setTimeout(() => toast.remove(), 400);
             }, 5000);
         }
+
+        construirBarraDias();
+    </script>
+</body>
+</html>
 
         construirBarraDias();
     </script>
