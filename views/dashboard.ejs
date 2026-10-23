@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gimnasio 24/7 Dreams - Sistema de Reservas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gimnasio Proveedores Dreams - Sistema de Reservas</title>
     <style>
         :root {
             --bg-principal: #080d1a;
@@ -29,6 +29,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -47,6 +48,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 16px;
         }
 
         .header-titulos h1 {
@@ -94,6 +96,7 @@
             cursor: pointer;
             text-decoration: none;
             transition: all 0.2s ease;
+            white-space: nowrap;
         }
 
         .btn-header:hover {
@@ -127,6 +130,7 @@
         }
 
         .btn-semana {
+            flex: 1;
             background: var(--bg-tarjeta);
             color: var(--texto-apagado);
             border: 1.5px solid var(--borde-tarjeta);
@@ -136,6 +140,7 @@
             font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.2s ease;
+            text-align: center;
         }
 
         .btn-semana.activo {
@@ -237,7 +242,7 @@
             background: #1c1524;
             color: #fca5a5;
             border: 1px solid #991b1b;
-            padding: 3px 10px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-size: 0.85rem;
             font-weight: 700;
@@ -272,7 +277,7 @@
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.15);
         }
 
-        /* Horario pasado o bloqueado por límite de 2 horas */
+        /* Horario pasado o límite diario */
         .turno-card.pasado,
         .turno-card.limite-alcanzado {
             background: var(--bg-pasado);
@@ -337,7 +342,7 @@
         /* Botones de acción */
         .btn-turno {
             width: 100%;
-            padding: 10px;
+            padding: 12px 10px;
             border-radius: 8px;
             font-weight: 700;
             font-size: 0.9rem;
@@ -351,8 +356,8 @@
             color: #000;
         }
 
-        .btn-reservar:hover {
-            opacity: 0.92;
+        .btn-reservar:active {
+            transform: scale(0.98);
         }
 
         .btn-cancelar {
@@ -360,8 +365,8 @@
             color: #f8fafc;
         }
 
-        .btn-cancelar:hover {
-            background: #b91c1c;
+        .btn-cancelar:active {
+            transform: scale(0.98);
         }
 
         .btn-deshabilitado {
@@ -388,6 +393,109 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.5);
             transition: opacity 0.4s ease, transform 0.4s ease;
         }
+
+        /* -------------------------------------------------------------
+           OPTIMIZACIONES RESPONSIVAS PARA MÓVILES (PANTALLAS <= 768px)
+        ------------------------------------------------------------- */
+        @media (max-width: 768px) {
+            header {
+                padding: 14px 18px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .header-titulos h1 {
+                font-size: 1.15rem;
+            }
+
+            .header-titulos p {
+                font-size: 0.78rem;
+            }
+
+            .header-perfil {
+                width: 100%;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                gap: 10px;
+                border-top: 1px solid #142038;
+                padding-top: 10px;
+            }
+
+            .datos-usuario {
+                text-align: left;
+                width: 100%;
+                order: 1;
+            }
+
+            .header-perfil .btn-header {
+                flex: 1;
+                text-align: center;
+                order: 2;
+                padding: 9px 8px;
+                font-size: 0.8rem;
+            }
+
+            main {
+                margin: 14px auto;
+                padding: 0 14px 30px;
+            }
+
+            /* Barra de Días: Scroll horizontal táctil sin deformarse */
+            .dias-contenedor {
+                display: flex;
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 6px;
+                gap: 8px;
+            }
+
+            /* Ocultar barra de scroll para limpieza visual */
+            .dias-contenedor::-webkit-scrollbar {
+                display: none;
+            }
+            .dias-contenedor {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .dia-card {
+                flex: 0 0 74px;
+                scroll-snap-align: start;
+                padding: 10px 4px;
+            }
+
+            .dia-card .numero-fecha {
+                font-size: 1.1rem;
+            }
+
+            /* Fila de Canceladas en móvil */
+            .caja-canceladas {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 10px 14px;
+            }
+
+            /* Grilla de turnos en columna única para fácil toque */
+            .grilla-turnos {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .turno-card {
+                padding: 14px 16px;
+                min-height: auto;
+            }
+
+            .alerta-toast {
+                left: 16px;
+                right: 16px;
+                bottom: 16px;
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -398,11 +506,11 @@
             <p>Control de Acceso y Aforo (Máximo 4 personas por turno)</p>
         </div>
         <div class="header-perfil">
-            <button id="btnNotif" class="btn-header" onclick="solicitarPermisoAvisos()">🔔 Activar Notificaciones</button>
             <div class="datos-usuario">
                 <span class="nombre"><%= usuario.nombre_completo %></span>
                 <span class="detalle"><%= usuario.cargo %> | <%= usuario.area %> (<%= usuario.rol %>)</span>
             </div>
+            <button id="btnNotif" class="btn-header" onclick="solicitarPermisoAvisos()">🔔 Activar Avisos</button>
             <a href="/logout" class="btn-header btn-logout">Cerrar Sesión</a>
         </div>
     </header>
@@ -505,7 +613,13 @@
             tarjetas.forEach((tarjeta, index) => {
                 const dia = new Date(lunes);
                 dia.setDate(lunes.getDate() + index);
-                tarjeta.classList.toggle('activo', dia.toLocaleDateString('en-CA') === fechaActivaStr);
+                const coincide = dia.toLocaleDateString('en-CA') === fechaActivaStr;
+                tarjeta.classList.toggle('activo', coincide);
+                
+                // Centrado automático en móviles al cambiar de día
+                if (coincide && window.innerWidth <= 768) {
+                    tarjeta.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                }
             });
 
             cargarGrillaTurnos();
@@ -517,7 +631,7 @@
             const cajaCanceladas = document.getElementById('cajaCanceladas');
             const filaCanceladas = document.getElementById('filaCanceladas');
 
-            contenedor.innerHTML = '<p style="color: var(--texto-apagado); grid-column: 1/-1;">Cargando turnos...</p>';
+            contenedor.innerHTML = '<p style="color: var(--texto-apagado); grid-column: 1/-1; text-align: center; padding: 20px 0;">Cargando turnos...</p>';
 
             try {
                 const res = await fetch(`/api/horarios?fecha=${fechaActivaStr}`);
@@ -528,11 +642,9 @@
                 const horaActual = new Date().getHours();
                 const esHoy = fechaActivaStr === hoyStr;
 
-                // 1. Detección de límite diario: ¿El usuario ya tiene 2 horas reservadas hoy?
                 const misReservasDelDia = data.bloques.filter(b => b.reservadoPorMi).length;
                 const limiteAlcanzado = misReservasDelDia >= 2;
 
-                // 2. Fila Canceladas: Solo Hoy o Mañana y solo horas futuras
                 const canceladasFuturas = (data.horasCanceladas || []).filter(hStr => {
                     const horaNum = parseInt(hStr.split(':')[0], 10);
                     return !esHoy || horaNum >= horaActual;
@@ -554,14 +666,13 @@
                     const card = document.createElement('div');
                     const bloquePasado = esHoy && b.hora < horaActual;
 
-                    // Determinar clase de estado
                     let claseEstado = '';
                     if (bloquePasado) {
                         claseEstado = 'pasado';
                     } else if (b.reservadoPorMi) {
                         claseEstado = 'mio';
                     } else if (limiteAlcanzado) {
-                        claseEstado = 'limite-alcanzado'; // Pasa a gris si alcanzó las 2 reservas
+                        claseEstado = 'limite-alcanzado';
                     } else if (!b.disponible) {
                         claseEstado = 'lleno';
                     }
@@ -577,7 +688,6 @@
                         `;
                     }
 
-                    // Determinar botón de acción
                     let botonHtml = '';
                     if (bloquePasado) {
                         botonHtml = `<button class="btn-turno btn-deshabilitado" disabled>Horario Pasado</button>`;
@@ -591,7 +701,6 @@
                         botonHtml = `<button class="btn-turno btn-deshabilitado" disabled>Sin Cupos</button>`;
                     }
 
-                    // Badge de aforo
                     let badgeClase = 'disponible';
                     if (bloquePasado || (limiteAlcanzado && !b.reservadoPorMi)) {
                         badgeClase = 'pasado';
@@ -616,7 +725,7 @@
                 });
 
             } catch (err) {
-                contenedor.innerHTML = `<p style="color: #ef4444; grid-column: 1/-1;">Error: ${err.message}</p>`;
+                contenedor.innerHTML = `<p style="color: #ef4444; grid-column: 1/-1; text-align: center;">Error: ${err.message}</p>`;
             }
         }
 
@@ -704,7 +813,6 @@
     </script>
 </body>
 </html>
-
         construirBarraDias();
     </script>
 </body>
