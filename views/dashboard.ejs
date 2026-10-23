@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gimnasio 24/7 Dreams - Sistema de Reservas</title>
+    <style>
+        :root {
+            --bg-principal: #0b132b;
+            --bg-tarjeta: #141e3c;
+            --bg-bloque: #1c2a4f;
+            --bg-deshabilitado: #0e152b;
+            --borde: #24355a;
+            --borde-tarjeta: #2b3d68; /* Borde más definido y marcado */
+            --borde-dorado: #d4af37;
+            --oro: #d4af37;
+            --oro-claro: #fef08a;
+            --texto-claro: #f8fafc;
+            --texto-apagado: #8da0cb;
+            --rojo-alerta: #ef4444;
+            --verde-disponible: #22c55e;
+            --rojo-boton: #991b1b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-claro);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Cabecera Corporativa */
+        header {
+            background-color: var(--bg-tarjeta);
+            border-bottom: 1px solid var(--borde);
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-titulos h1 {
+            font-size: 1.35rem;
+            color: var(--oro);
+            letter-spacing: 0.5px;
+            font-weight: 700;
+        }
+
+        .header-titulos p {
+            font-size: 0.85rem;
+            color: var(--texto-apagado);
+            margin-top: 3px;
+        }
+
+        .header-perfil {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .datos-usuario {
+            text-align: right;
+            font-size: 0.85rem;
+        }
+
+        .datos-usuario .nombre {
+            font-weight: 700;
+            color: var(--oro-claro);
+            display: block;
+        }
+
+        .datos-usuario .detalle {
+            color: var(--texto-apagado);
+            font-size: 0.8rem;
+        }
+
+        .btn-header {
+            background: var(--bg-principal);
+            color: var(--oro);
+            border: 1px solid var(--borde);
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-header:hover {
+            border-color: var(--oro);
+            color: #fff;
+        }
+
+        .btn-logout {
+            color: #fca5a5;
+            border-color: #7f1d1d;
+        }
+
+        .btn-logout:hover {
+            background: #7f1d1d;
+            color: #fff;
+        }
+
+        main {
+            flex: 1;
+            max-width: 1240px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 0 20px 40px;
+        }
+
+        /* Selector de Semanas */
+        .semana-control {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .btn-semana {
+            background: var(--bg-tarjeta);
+            color: var(--texto-apagado);
+            border: 1px solid var(--borde);
+            padding: 11px 24px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-semana:hover {
+            border-color: var(--oro);
+            color: var(--texto-claro);
+        }
+
+        .btn-semana.activo {
+            background: var(--oro);
+            color: #0b132b;
+            border-color: var(--oro);
+        }
+
+        /* Barra de Días */
+        .dias-contenedor {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dia-card {
+            background: var(--bg-tarjeta);
+            border: 1.5px solid var(--borde-tarjeta);
+            border-radius: 8px;
+            padding: 12px 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            position: relative;
+        }
+
+        .dia-card:hover:not(.bloqueado) {
+            border-color: var(--oro);
+            transform: translateY(-2px);
+        }
+
+        .dia-card.activo {
+            background: var(--bg-bloque);
+            border-color: var(--oro);
+            box-shadow: 0 0 12px rgba(212, 175, 55, 0.25);
+        }
+
+        .dia-card .etiqueta-nombre {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--texto-apagado);
+            text-transform: uppercase;
+            display: block;
+        }
+
+        .dia-card.activo .etiqueta-nombre {
+            color: var(--oro-claro);
+        }
+
+        .dia-card .numero-fecha {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #fff;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .dia-card.activo .numero-fecha {
+            color: var(--oro);
+        }
+
+        .dia-card .badge-hoy {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--oro);
+            background: rgba(212, 175, 55, 0.15);
+            padding: 1px 4px;
+            border-radius: 4px;
+        }
+
+        .dia-card.bloqueado {
+            background: var(--bg-deshabilitado);
+            border-color: #1a243c;
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: grayscale(80%);
+        }
+
+        .dia-card.bloqueado .numero-fecha,
+        .dia-card.bloqueado .etiqueta-nombre {
+            color: #64748b;
+        }
+
+        /* Fila de Canceladas (Solo para Hoy o Mañana) */
+        .caja-canceladas {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(20, 30, 60, 0.75);
+            border: 1.5px solid #7f1d1d;
+            border-left: 4px solid var(--rojo-alerta);
+            border-radius: 8px;
+            padding: 10px 16px;
+            margin-bottom: 20px;
+        }
+
+        .label-canceladas {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #f87171;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        .fila-canceladas {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .chip-cancelada {
+            background: #1e1b2e;
+            color: #fca5a5;
+            border: 1px solid #991b1b;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        /* Grilla y Borde Reforzado en la Zona de Horas */
+        .grilla-turnos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 16px;
+        }
+
+        .turno-card {
+            background: var(--bg-tarjeta);
+            border: 1.5px solid var(--borde-tarjeta); /* Borde bien definido solicitado */
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 145px;
+            transition: all 0.2s ease;
+        }
+
+        .turno-card:hover:not(.pasado) {
+            border-color: var(--borde-dorado);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        }
+
+        .turno-card.mio {
+            border-color: var(--oro);
+            background: #172554;
+        }
+
+        .turno-card.lleno {
+            opacity: 0.75;
+        }
+
+        .turno-card.pasado {
+            background: var(--bg-deshabilitado);
+            border-color: #1a243c;
+            opacity: 0.45;
+        }
+
+        .turno-encabezado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .turno-hora {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--oro-claro);
+        }
+
+        .turno-card.pasado .turno-hora {
+            color: #64748b;
+        }
+
+        .badge-aforo {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 12px;
+            background: var(--bg-principal);
+            border: 1px solid var(--borde);
+        }
+
+        .badge-aforo.disponible { color: var(--verde-disponible); border-color: rgba(34, 197, 94, 0.35); }
+        .badge-aforo.lleno { color: var(--rojo-alerta); border-color: rgba(239, 68, 68, 0.35); }
+        .badge-aforo.pasado { color: #64748b; border-color: #334155; }
+
+        .participantes-caja {
+            font-size: 0.75rem;
+            color: var(--texto-apagado);
+            background: rgba(11, 19, 43, 0.6);
+            border: 1px dashed var(--borde);
+            padding: 6px 8px;
+            border-radius: 6px;
+            margin: 8px 0;
+            line-height: 1.35;
+        }
+
+        .participantes-caja div {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Botones de Acción */
+        .btn-turno {
+            width: 100%;
+            padding: 9px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            border: none;
+            margin-top: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-reservar {
+            background: var(--oro);
+            color: #0b132b;
+        }
+
+        .btn-reservar:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-cancelar {
+            background: var(--rojo-boton);
+            color: #fecaca;
+            border: 1px solid #dc2626;
+        }
+
+        .btn-cancelar:hover {
+            background: #b91c1c;
+        }
+
+        .btn-deshabilitado {
+            background: #1e293b;
+            color: #64748b;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        /* Toast de Alerta */
+        .alerta-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 99999;
+            background: #0f172a;
+            color: var(--oro-claro);
+            border: 1px solid var(--oro);
+            padding: 16px 22px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            line-height: 1.5;
+            white-space: pre-line;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-titulos">
+            <h1>GIMNASIO 24/7 DREAMS</h1>
+            <p>Control de Acceso y Aforo (Máximo 4 personas por bloque horario)</p>
+        </div>
+        <div class="header-perfil">
+            <button id="btnNotif" class="btn-header" onclick="solicitarPermisoAvisos()">🔔 Activar Notificaciones</button>
+            <div class="datos-usuario">
+                <span class="nombre"><%= usuario.nombre_completo %></span>
+                <span class="detalle"><%= usuario.cargo %> | <%= usuario.area %> (<%= usuario.rol %>)</span>
+            </div>
+            <a href="/logout" class="btn-header btn-logout">Cerrar Sesión</a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Pestañas Semana Actual / Semana Siguiente -->
+        <div class="semana-control">
+            <button class="btn-semana activo" id="btnSemanaActual" onclick="seleccionarSemana(0)">Semana Actual</button>
+            <button class="btn-semana" id="btnSemanaSiguiente" onclick="seleccionarSemana(1)">Semana Siguiente</button>
+        </div>
+
+        <!-- Barra de Días con bloqueo automático de pasados -->
+        <div class="dias-contenedor" id="barraDias"></div>
+
+        <!-- Fila de Canceladas (Aparece solo si el día es Hoy o Mañana y tiene horas canceladas) -->
+        <div class="caja-canceladas" id="cajaCanceladas" style="display: none;">
+            <span class="label-canceladas">Canceladas:</span>
+            <div class="fila-canceladas" id="filaCanceladas"></div>
+        </div>
+
+        <!-- Grilla de Turnos con bordes reforzados -->
+        <div class="grilla-turnos" id="grillaTurnos"></div>
+    </main>
+
+    <script>
+        let semanaOffset = 0; // 0 = actual, 1 = siguiente
+        let fechaActivaStr = '';
+
+        const NOMBRES_DIAS = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+        function calcularLunes(offset) {
+            const fecha = new Date();
+            const diaSemana = fecha.getDay(); // 0 es Domingo
+            const diferencia = (diaSemana === 0 ? -6 : 1) - diaSemana;
+            fecha.setDate(fecha.getDate() + diferencia + (offset * 7));
+            return fecha;
+        }
+
+        function esHoyOMañana(fechaStr) {
+            const ahora = new Date();
+            const hoyStr = ahora.toLocaleDateString('en-CA');
+            const manana = new Date(ahora);
+            manana.setDate(manana.getDate() + 1);
+            const mananaStr = manana.toLocaleDateString('en-CA');
+
+            return (fechaStr === hoyStr || fechaStr === mananaStr);
+        }
+
+        function construirBarraDias() {
+            const barra = document.getElementById('barraDias');
+            barra.innerHTML = '';
+
+            const lunes = calcularLunes(semanaOffset);
+            const hoyStr = new Date().toLocaleDateString('en-CA');
+            let primerDiaHabilitado = null;
+
+            for (let i = 0; i < 7; i++) {
+                const fechaDia = new Date(lunes);
+                fechaDia.setDate(lunes.getDate() + i);
+                const str = fechaDia.toLocaleDateString('en-CA');
+
+                const esPasado = str < hoyStr;
+                const esHoy = str === hoyStr;
+
+                if (!esPasado && !primerDiaHabilitado) {
+                    primerDiaHabilitado = str;
+                }
+
+                const card = document.createElement('div');
+                card.className = `dia-card ${esPasado ? 'bloqueado' : ''} ${str === fechaActivaStr ? 'activo' : ''}`;
+
+                let badgeHoyHtml = esHoy ? `<span class="badge-hoy">HOY</span>` : '';
+
+                card.innerHTML = `
+                    ${badgeHoyHtml}
+                    <span class="etiqueta-nombre">${NOMBRES_DIAS[i]}</span>
+                    <span class="numero-fecha">${fechaDia.getDate()}</span>
+                `;
+
+                if (!esPasado) {
+                    card.onclick = () => fijarDiaActivo(str);
+                }
+
+                barra.appendChild(card);
+            }
+
+            if (!fechaActivaStr || fechaActivaStr < hoyStr || (semanaOffset === 1 && !fechaActivaStr)) {
+                fijarDiaActivo(semanaOffset === 0 ? hoyStr : primerDiaHabilitado);
+            }
+        }
+
+        function seleccionarSemana(offset) {
+            semanaOffset = offset;
+            document.getElementById('btnSemanaActual').classList.toggle('activo', offset === 0);
+            document.getElementById('btnSemanaSiguiente').classList.toggle('activo', offset === 1);
+            fechaActivaStr = '';
+            construirBarraDias();
+        }
+
+        function fijarDiaActivo(str) {
+            fechaActivaStr = str;
+            const tarjetas = document.querySelectorAll('.dia-card');
+            const lunes = calcularLunes(semanaOffset);
+
+            tarjetas.forEach((tarjeta, index) => {
+                const dia = new Date(lunes);
+                dia.setDate(lunes.getDate() + index);
+                const currentStr = dia.toLocaleDateString('en-CA');
+                tarjeta.classList.toggle('activo', currentStr === fechaActivaStr);
+            });
+
+            cargarGrillaTurnos();
+        }
+
+        async function cargarGrillaTurnos() {
+            if (!fechaActivaStr) return;
+            const contenedor = document.getElementById('grillaTurnos');
+            const cajaCanceladas = document.getElementById('cajaCanceladas');
+            const filaCanceladas = document.getElementById('filaCanceladas');
+
+            contenedor.innerHTML = '<p style="color: var(--texto-apagado); grid-column: 1/-1;">Cargando horarios...</p>';
+
+            try {
+                const res = await fetch(`/api/horarios?fecha=${fechaActivaStr}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                const hoyStr = new Date().toLocaleDateString('en-CA');
+                const horaActual = new Date().getHours();
+                const esHoy = fechaActivaStr === hoyStr;
+
+                // --- FILTRO: SOLO HORAS FUTURAS ---
+                // Si es hoy: solo horas iguales o mayores a la hora actual
+                // Si es mañana: todas las horas son futuras
+                const canceladasFuturas = (data.horasCanceladas || []).filter(hStr => {
+                    const horaNum = parseInt(hStr.split(':')[0], 10);
+                    if (!esHoy) return true; 
+                    return horaNum >= horaActual; 
+                });
+
+                if (esHoyOMañana(fechaActivaStr) && canceladasFuturas.length > 0) {
+                    filaCanceladas.innerHTML = canceladasFuturas
+                        .map(h => `<span class="chip-cancelada">${h} hrs</span>`)
+                        .join('');
+                    cajaCanceladas.style.display = 'flex';
+                } else {
+                    cajaCanceladas.style.display = 'none';
+                    filaCanceladas.innerHTML = '';
+                }
+                // ----------------------------------
+
+                contenedor.innerHTML = '';
+
+                data.bloques.forEach(b => {
+                    const card = document.createElement('div');
+                    const bloquePasado = esHoy && b.hora < horaActual;
+
+                    let claseEstado = '';
+                    if (bloquePasado) claseEstado = 'pasado';
+                    else if (b.reservadoPorMi) claseEstado = 'mio';
+                    else if (!b.disponible) claseEstado = 'lleno';
+
+                    card.className = `turno-card ${claseEstado}`;
+
+                    let participantesHtml = '';
+                    if (b.participantes && b.participantes.length > 0) {
+                        participantesHtml = `
+                            <div class="participantes-caja">
+                                ${b.participantes.map(p => `<div>• ${p.nombre} (${p.cargo} | ${p.area})</div>`).join('')}
+                            </div>
+                        `;
+                    }
+
+                    let botonAccion = '';
+                    if (bloquePasado) {
+                        botonAccion = `<button class="btn-turno btn-deshabilitado" disabled>Horario Pasado</button>`;
+                    } else if (b.reservadoPorMi) {
+                        botonAccion = `<button class="btn-turno btn-cancelar" onclick="cancelarTurno(${b.reservaId})">Cancelar Mi Reserva</button>`;
+                    } else if (b.disponible) {
+                        botonAccion = `<button class="btn-turno btn-reservar" onclick="reservarTurno(${b.hora})">Reservar Cupo</button>`;
+                    } else {
+                        botonAccion = `<button class="btn-turno btn-deshabilitado" disabled>Aforo Completo (4/4)</button>`;
+                    }
+
+                    let badgeClase = 'disponible';
+                    if (bloquePasado) badgeClase = 'pasado';
+                    else if (b.ocupados >= b.capacidadMaxima) badgeClase = 'lleno';
+
+                    card.innerHTML = `
+                        <div>
+                            <div class="turno-encabezado">
+                                <span class="turno-hora">${b.horaTexto}</span>
+                                <span class="badge-aforo ${badgeClase}">
+                                    ${bloquePasado ? 'Finalizado' : `${b.ocupados} / ${b.capacidadMaxima}`}
+                                </span>
+                            </div>
+                            ${participantesHtml}
+                        </div>
+                        ${botonAccion}
+                    `;
+
+                    contenedor.appendChild(card);
+                });
+
+            } catch (err) {
+                contenedor.innerHTML = `<p style="color: var(--rojo-alerta); grid-column: 1/-1;">Error: ${err.message}</p>`;
+            }
+        }
+
+        async function reservarTurno(hora) {
+            try {
+                const res = await fetch('/api/reservar', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fecha: fechaActivaStr, horaInicio: hora })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                mostrarToast("✓ " + data.mensaje);
+                cargarGrillaTurnos();
+            } catch (err) {
+                alert("No se pudo reservar: " + err.message);
+            }
+        }
+
+        async function cancelarTurno(reservaId) {
+            if (!confirm("¿Deseas cancelar tu reserva de este bloque horario?")) return;
+
+            try {
+                const res = await fetch('/api/cancelar-reserva', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ reservaId })
+                });
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error);
+
+                mostrarToast("✓ Reserva cancelada.");
+                cargarGrillaTurnos();
+            } catch (err) {
+                alert("Error al cancelar: " + err.message);
+            }
+        }
+
+        // SSE en Tiempo Real
+        if (!!window.EventSource) {
+            const canalSSE = new EventSource('/api/notificaciones/stream');
+
+            canalSSE.onmessage = function(event) {
+                try {
+                    const data = JSON.parse(event.data);
+                    const mensaje = `Alguien ha cancelado una hora.\nDía: ${data.dia}\nHora: ${data.hora}`;
+
+                    mostrarToast(mensaje);
+
+                    if (window.Notification && Notification.permission === "granted") {
+                        new Notification("Hora Cancelada en Gimnasio", {
+                            body: `Se ha cancelado una hora para ${data.dia} a las ${data.hora}.`,
+                            icon: "/img/logo.png"
+                        });
+                    }
+
+                    cargarGrillaTurnos();
+                } catch (e) {
+                    console.error("Error SSE:", e);
+                }
+            };
+        }
+
+        function solicitarPermisoAvisos() {
+            if (!("Notification" in window)) {
+                alert("Navegador sin soporte de notificaciones.");
+                return;
+            }
+            Notification.requestPermission().then(p => {
+                if (p === "granted") {
+                    document.getElementById('btnNotif').style.display = 'none';
+                    mostrarToast("Avisos activados con éxito.");
+                }
+            });
+        }
+
+        if (window.Notification && Notification.permission === "granted") {
+            document.getElementById('btnNotif').style.display = 'none';
+        }
+
+        function mostrarToast(txt) {
+            const toast = document.createElement('div');
+            toast.className = 'alerta-toast';
+            toast.innerText = txt;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                setTimeout(() => toast.remove(), 400);
+            }, 5000);
+        }
+
+        construirBarraDias();
+    </script>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso al Gimnasio - Casino Dreams</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#0b132b] flex items-center justify-center min-h-screen px-4">
+    <div class="bg-[#141e3c] border border-[#233058] rounded-2xl p-8 max-w-md w-full shadow-2xl">
+        <div class="text-center mb-6">
+            <!-- Imagen de Logo corporativo situada arriba de GIMNASIO 24/7 DREAMS -->
+            <div class="flex justify-center mb-4">
+                <img src="/img/logo.png" 
+                     alt="Logo Casino Dreams" 
+                     class="h-20 max-w-[220px] object-contain drop-shadow-[0_4px_10px_rgba(212,175,55,0.3)]" 
+                     onerror="this.onerror=null; this.src='https://placehold.co/200x70/0b132b/d4af37?text=CASINO+DREAMS';">
+            </div>
+            
+            <h1 class="text-xl font-bold tracking-wider text-[#d4af37]">GIMNASIO COLABORADORESDREAMS</h1>
+            <p class="text-xs text-[#8da0cb] mt-1">Ingresa tu código de usuario asignado</p>
+        </div>
+
+        <% if (error) { %>
+            <div class="bg-red-900/50 border border-red-500 text-red-200 text-sm p-3 rounded mb-4 text-center">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <form action="/login" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-xs font-semibold text-[#8da0cb] mb-1">USUARIO</label>
+                <input type="text" name="username" required placeholder="Tu código de socio" class="w-full bg-[#0a1024] border border-[#233058] text-white px-3 py-2 rounded-lg focus:outline-none focus:border-[#d4af37] uppercase">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold text-[#8da0cb] mb-1">CONTRASEÑA</label>
+                <input type="password" name="password" required placeholder="••••••••" class="w-full bg-[#0a1024] border border-[#233058] text-white px-3 py-2 rounded-lg focus:outline-none focus:border-[#d4af37]">
+            </div>
+            <button type="submit" class="w-full bg-[#d4af37] text-black font-bold py-2.5 rounded-lg hover:bg-[#c29e2f] transition-all shadow-lg shadow-yellow-500/10">INGRESAR AL SISTEMA</button>
+        </form>
+    </div>
+</body>
+</html>
